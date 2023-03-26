@@ -1,0 +1,22 @@
+{
+    "name": "2two2d/php_practice",
+    "description": "Эта работа созданна 2two2d 27.03.2023",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "2two2d"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.4 | ^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Src\\": "core/Src/",
+            "": "app/"
+        }
+    }
+
+}
