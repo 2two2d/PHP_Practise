@@ -1,5 +1,4 @@
-<?php
-?>
+<?php error_reporting(E_ERROR | E_PARSE);?>
 <form action="" method="POST">
     <input type="text" name="role_id" value="<?= $role_id ?>" hidden>
     <div id="pointOne">

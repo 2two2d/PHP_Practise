@@ -39,7 +39,7 @@
         align-items: center;
     }
     div > form{
-        margin-top: 100px;
+        margin-top: 20px;
         width: 300px;
         padding: 5px;
         background-color: lightblue;

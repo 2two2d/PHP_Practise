@@ -2,7 +2,6 @@
 
 namespace Middlewares;
 
-use Src\Auth\Auth;
 use Src\Request;
 
 class IsroleidthreeMiddleware

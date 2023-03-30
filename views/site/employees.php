@@ -1,3 +1,4 @@
+<?php error_reporting(E_ERROR | E_PARSE);?>
 <div id="employeesBlock">
     <?php if($employees[0]):?>
     <ul>

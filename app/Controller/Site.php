@@ -1,7 +1,7 @@
 <?php
 
 namespace Controller;
-
+error_reporting(E_ERROR | E_PARSE);
 use Illuminate\Database\Capsule\Manager as DB;
 use Src\Auth\Auth;
 use Src\View;
@@ -65,12 +65,13 @@ class Site
                 'post' => $_POST['post'],
             ]);
             $employee->save();
+            app()->route->redirect('/employees');
         }
 
         return new View('site.adminOrEmployeeRegister', ['departments' => $departments,
-                                                              'staffs' => $staffs,
-                                                              'posts' => $posts,
-                                                              'role_id' => $role_id]);
+            'staffs' => $staffs,
+            'posts' => $posts,
+            'role_id' => $role_id]);
     }
 
     public function employeeChange(Request $request): string
@@ -83,10 +84,18 @@ class Site
 
 
         return new View('site.employeeChange', ['employee' => $employee,
-                                                     'user' => $user,
-                                                     'departments' => $departments,
-                                                     'staffs' => $staffs,
-                                                     'posts' => $posts]);
+            'user' => $user,
+            'departments' => $departments,
+            'staffs' => $staffs,
+            'posts' => $posts]);
+    }
+
+    public function employeeDelete(Request $request): string
+    {
+        $employee = Employee::where('username', $request->username)->first();
+        Employee::where('username', $request->username)->delete();
+        User::where('username', $request->username)->delete();
+        return new View('site.employeeDeleted', ['employee' => $employee]);
     }
 
     public function login(Request $request): string

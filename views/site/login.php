@@ -1,7 +1,9 @@
+<?php error_reporting(E_ERROR | E_PARSE);?>
 <h3><?= $message ?? ''; ?></h3>
 
 <?php if(app()->auth->user()->username): echo "<h2>Вы уже вошли!</h2>"; endif;?>
 <?php
+
 if (!app()->auth::check()):
     ?>
     <form method="post">
