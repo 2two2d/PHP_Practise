@@ -1,6 +1,6 @@
 <h3><?= $message ?? ''; ?></h3>
 
-<h3><?= app()->auth->user()->username ?? ''; ?></h3>
+<?php if(app()->auth->user()->username): echo "<h2>Вы уже вошли!</h2>"; endif;?>
 <?php
 if (!app()->auth::check()):
     ?>

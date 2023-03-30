@@ -1,7 +1,3 @@
 .idea
 /vendor/
-<<<<<<< HEAD
 composer.lock
-=======
-composer.lock
->>>>>>> origin/main

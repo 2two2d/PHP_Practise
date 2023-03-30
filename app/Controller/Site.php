@@ -27,7 +27,7 @@ class Site
 
     public function employees(Request $request): string
     {
-        $employees = Employee::where('role_id', 3)->join('user', 'user.username','=','employee.username')->get();
+        $employees = Employee::where('role_id', 1)->join('user', 'user.username','=','employee.username')->get();
         return new View('site.employees',['employees' => $employees]);
     }
 
@@ -75,7 +75,18 @@ class Site
 
     public function employeeChange(Request $request): string
     {
-        return new View('site.employeeChange');
+        $employee = Employee::where('username', $request->username)->first();
+        $user = User::where('username', $request->username)->first();
+        $departments = Department::all();
+        $staffs = Staff::all();
+        $posts = Post::all();
+
+
+        return new View('site.employeeChange', ['employee' => $employee,
+                                                     'user' => $user,
+                                                     'departments' => $departments,
+                                                     'staffs' => $staffs,
+                                                     'posts' => $posts]);
     }
 
     public function login(Request $request): string
