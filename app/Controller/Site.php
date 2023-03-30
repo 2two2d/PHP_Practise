@@ -3,6 +3,7 @@
 namespace Controller;
 error_reporting(E_ERROR | E_PARSE);
 use Illuminate\Database\Capsule\Manager as DB;
+use Src\Validators\Validator;
 use Src\Auth\Auth;
 use Src\View;
 use Model\Post;
@@ -27,12 +28,25 @@ class Site
 
     public function employees(Request $request): string
     {
-        $employees = Employee::where('role_id', 1)->join('user', 'user.username','=','employee.username')->get();
-        return new View('site.employees',['employees' => $employees]);
+        $employees = Employee::where('role_id', '<', app()->auth->user()->role_id)->join('user', 'user.username','=','employee.username')->get();
+
+        $currentDate = date('Ymd', time());
+        $evgBirthday = Employee::where('role_id', '<', app()->auth->user()->role_id)->join('user', 'user.username','=','employee.username')->avg('birthday');
+        $evgAge = round(($currentDate - $evgBirthday)/10000, 2);
+        return new View('site.employees',['employees' => $employees,
+                                               'evgAge' => $evgAge]);
     }
 
     public function adminRegister(Request $request): string
     {
+        if($request->method==='POST'){
+            $user = User::create($request->all());
+            $user->save();
+            $employee = Employee::create($request->all());
+            $employee->save();
+            app()->route->redirect('/employees');
+        }
+
         $role_id = 2;
         return new View('site.adminOrEmployeeRegister', ['role_id' => $role_id]);
     }
@@ -44,26 +58,35 @@ class Site
         $staffs = Staff::all();
         $posts = Post::all();
 
-        if($_POST['register']){
-            $user = User::create([
-                'role_id' => $_POST['role_id'],
-                'username' => $_POST['username'],
-                'email' => $_POST['email'],
-                'password' => $_POST['password'],
+        if($request->method==='POST'){
+
+            $validator = new Validator($request->all(), [
+                'username' => ['required', 'unique:user,username', 'nospaces'],
+                'email' => ['required', 'unique:user,email', 'nospaces', 'email'],
+                'password' => ['required', 'password', 'nospaces'],
+                'name' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
+                'surname' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
+                'midlename' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
+                'birthday' => ['required',],
+                'adress' => ['required'],
+            ], [
+                'required' => 'Пустое поле :field!',
+                'unique' => 'Поле :field должно быть уникально!',
+                'password' => 'Поле :field должно содержать больше 8 символов!',
+                'nospaces' => 'Поле :field не может содержать пробелы!',
+                'startswithcapital' => 'Поле :field должно начинаться с заглавной буквы!',
+                'onlychars' => 'Поле :field должно содержать только символы кириллицы!',
+                'email' => 'Почта должна содержать символ "@"',
             ]);
+
+            if($validator->fails()){
+                return new View('site.adminOrEmployeeRegister',
+                    ['message' => $validator->errors()]);
+            }
+
+            $user = User::create($request->all());
             $user->save();
-            $employee = Employee::create([
-                'username' => $_POST['username'],
-                'name' => $_POST['name'],
-                'surname' => $_POST['surname'],
-                'midlename' => $_POST['midlename'],
-                'birthday' => $_POST['birthday'],
-                'sex' => $_POST['sex'],
-                'adress' => $_POST['adress'],
-                'department' => $_POST['department'],
-                'staff' => $_POST['staff'],
-                'post' => $_POST['post'],
-            ]);
+            $employee = Employee::create($request->all());
             $employee->save();
             app()->route->redirect('/employees');
         }
@@ -77,14 +100,41 @@ class Site
     public function employeeChange(Request $request): string
     {
         $employee = Employee::where('username', $request->username)->first();
-        $user = User::where('username', $request->username)->first();
         $departments = Department::all();
         $staffs = Staff::all();
         $posts = Post::all();
 
+        if($request->method==='POST'){
+
+            $validator = new Validator($request->all(), [
+                'username' => ['required', 'unique:user,username', 'nospaces'],
+                'email' => ['required', 'unique:user,email', 'nospaces', 'email'],
+                'password' => ['required', 'password', 'nospaces'],
+                'name' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
+                'surname' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
+                'midlename' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
+                'birthday' => ['required',],
+                'adress' => ['required'],
+            ], [
+                'required' => 'Пустое поле :field!',
+                'unique' => 'Поле :field должно быть уникально!',
+                'password' => 'Поле :field должно содержать больше 8 символов!',
+                'nospaces' => 'Поле :field не может содержать пробелы!',
+                'startswithcapital' => 'Поле :field должно начинаться с заглавной буквы!',
+                'onlychars' => 'Поле :field должно содержать только символы кириллицы!',
+                'email' => 'Почта должна содержать символ "@"',
+            ]);
+
+            if($validator->fails()){
+                return new View('site.employees',
+                    ['message' => $validator->errors()]);
+            }
+
+            Employee::where('username', $request->username)->update($request->all());
+            app()->route->redirect('/employees');
+        }
 
         return new View('site.employeeChange', ['employee' => $employee,
-            'user' => $user,
             'departments' => $departments,
             'staffs' => $staffs,
             'posts' => $posts]);

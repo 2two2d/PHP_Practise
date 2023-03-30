@@ -1,5 +1,7 @@
 <?php error_reporting(E_ERROR | E_PARSE);?>
+
 <div id="employeesBlock">
+    <h2 style="margin-bottom: 20px">Средний возраст сотрудников: <?php echo $evgAge; ?></h2>
     <?php if($employees[0]):?>
     <ul>
         <?php foreach ($employees as $employee){?>

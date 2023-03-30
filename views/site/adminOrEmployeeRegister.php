@@ -1,4 +1,9 @@
 <?php error_reporting(E_ERROR | E_PARSE);?>
+<?php foreach($message as $key => $value){
+    foreach($value as $error){
+        echo '<p style="color: red">'.$error.'</p>';
+    }
+}?>
 <form action="" method="POST">
     <input type="text" name="role_id" value="<?= $role_id ?>" hidden>
     <div id="pointOne">
@@ -27,7 +32,7 @@
             <?php if($role_id == 1):?>
                 <button type="button" onclick="setPointThree()">Дальше</button>
             <?php else:?>
-                <input type="submit" name="register" value="Зерегестрировать">
+                <input type="submit" value="Зерегестрировать">
             <?php endif;?>
         </div>
     </div>
@@ -49,7 +54,7 @@
             </select></label></br>
         <div>
             <button type="button" onclick="setPointTwo()">Назад</button>
-            <input type="submit" name="register" value="Зерегестрировать">
+            <input type="submit" value="Зерегестрировать">
         </div>
     </div>
 </form>

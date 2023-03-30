@@ -9,6 +9,15 @@ return [
         'auth' => \Middlewares\AuthMiddleware::class,
         'isroleidthree' => \Middlewares\IsroleidthreeMiddleware::class,
         'isroleidtwo' => \Middlewares\IsroleidtwoMiddleware::class,
+    ],
+    'validators' => [
+        'required' => \Validators\RequireValidator::class,
+        'unique' => \Validators\UniqueValidator::class,
+        'password' => \Validators\PasswordValidator::class,
+        'nospaces' => \Validators\SpaceValidator::class,
+        'startswithcapital' => \Validators\CapitalValidator::class,
+        'onlychars' => \Validators\OnlycharsValidator::class,
+        'email' => \Validators\EmailValidator::class
     ]
 ];
 
