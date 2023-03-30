@@ -16,16 +16,66 @@ class Site
 {
     public function index(Request $request): string
     {
-        $posts = Post::where('name', $request->name)->get();
-        return (new View())->render('site.post', ['posts' => $posts]);
+        return (new View())->render('site.about');
     }
 
-    public function signup(Request $request): string
+    public function personalData(Request $request): string
     {
-        if ($request->method==='POST' && User::create($request->all())){
-            app()->route->redirect('/go?name=физрук');
+        $employee = Employee::where('username', app()->auth->user()->username)->first();
+        return new View('site.personalData', ['employee' => $employee]);
+    }
+
+    public function employees(Request $request): string
+    {
+        $employees = Employee::where('role_id', 3)->join('user', 'user.username','=','employee.username')->get();
+        return new View('site.employees',['employees' => $employees]);
+    }
+
+    public function adminRegister(Request $request): string
+    {
+        $role_id = 2;
+        return new View('site.adminOrEmployeeRegister', ['role_id' => $role_id]);
+    }
+
+    public function employeeRegister(Request $request): string
+    {
+        $role_id = 1;
+        $departments = Department::all();
+        $staffs = Staff::all();
+        $posts = Post::all();
+
+        if($_POST['register']){
+            $user = User::create([
+                'role_id' => $_POST['role_id'],
+                'username' => $_POST['username'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+            ]);
+            $user->save();
+            $employee = Employee::create([
+                'username' => $_POST['username'],
+                'name' => $_POST['name'],
+                'surname' => $_POST['surname'],
+                'midlename' => $_POST['midlename'],
+                'birthday' => $_POST['birthday'],
+                'sex' => $_POST['sex'],
+                'adress' => $_POST['adress'],
+                'department' => $_POST['department'],
+                'staff' => $_POST['staff'],
+                'post' => $_POST['post'],
+            ]);
+            $employee->save();
         }
-        return new View('site.signup');
+
+        return new View('site.adminOrEmployeeRegister', ['departments' => $departments,
+                                                              'staffs' => $staffs,
+                                                              'posts' => $posts,
+                                                              'role_id' => $role_id]);
+    }
+
+    public function employeeChange(Request $request): string
+    {
+        return new View('site.employeeChange');
     }
 
     public function login(Request $request): string
@@ -36,7 +86,7 @@ class Site
         }
         //Если удалось аутентифицировать пользователя, то редирект
         if (Auth::attempt($request->all())) {
-            app()->route->redirect('/hello');
+            app()->route->redirect('/personal_data');
         }
         //Если аутентификация не удалась, то сообщение об ошибке
         return new View('site.login', ['message' => 'Неправильные логин или пароль']);
@@ -45,7 +95,7 @@ class Site
     public function logout(): void
     {
         Auth::logout();
-        app()->route->redirect('/hello');
+        app()->route->redirect('/about');
     }
 
 }

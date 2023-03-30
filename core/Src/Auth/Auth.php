@@ -42,6 +42,11 @@ class Auth
         return self::$user->findIdentity($id);
     }
 
+    public static function roleId()
+    {
+        return self::$user->role_id ?? 0;
+    }
+
     //Проверка является ли текущий пользователь аутентифицированным
     public static function check(): bool
     {
