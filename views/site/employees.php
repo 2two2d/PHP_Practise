@@ -1,7 +1,27 @@
 <?php error_reporting(E_ERROR | E_PARSE);?>
-
 <div id="employeesBlock">
+    <?php if($evgBirthday):?>
     <h2 style="margin-bottom: 20px">Средний возраст сотрудников: <?php echo $evgAge; ?></h2>
+    <?php endif;?>
+    <div id="searchBlock">
+        <form action="" method="get">
+            <label for="">Отдел: <select name="department" id="">
+                    <?php foreach ($departments as $department){?>
+                        <option value="<?= $department->name?>"><?= $department->name?></option>
+                    <?php };?>
+                </select></label>
+            <input type="submit" value="Поиск">
+        </form>
+        <form action="" method="get">
+            <label for="">Состав: <select name="staff" id="">
+                    <?php foreach ($staffs as $staff){?>
+                        <option value="<?= $staff->name?>"><?= $staff->name?></option>
+                    <?php };?>
+                </select></label>
+            <input type="submit" value="Поиск">
+        </form>
+        <a class="changeBtn" href="<?= app()->route->getUrl('/employees') ?>">Показать всех сотрудников</a>
+    </div>
     <?php if($employees[0]):?>
     <ul>
         <?php foreach ($employees as $employee){?>
@@ -32,6 +52,16 @@
         flex-direction: column;
         align-items: center;
     }
+    #searchBlock{
+        width: 80vw;
+        margin: 10px auto 10px auto;
+        height: 40px;
+        border-bottom: 2px solid black;
+        border-top: 2px solid black;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
     .employeeCard{
         display: flex;
         width: 800px;
@@ -42,7 +72,6 @@
     }
     .changeBtn{
         display: block;
-        width: 70px;
         padding: 5px;
         text-decoration: none;
         background-color: lightblue;

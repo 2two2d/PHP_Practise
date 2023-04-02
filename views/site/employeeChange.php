@@ -1,6 +1,19 @@
+<?php
+    if(gettype($message) == 'string'){
+        echo '<p style="color: limegreen">'.$message.'</p>';
+    }else{
+        foreach($message as $key => $value){
+            foreach($value as $error){
+                echo '<p style="color: red">'.$error.'</p>';
+            }
+        }
+    }
+?>
 <div>
-    <form action="" method="POST">
-        <label for="">Имя пользователя<br><input type="text" name="username" value="<?=$employee->username;?>"></label><br>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <img src="<?= '/PHP_PRACTICE/public/Images/'.$employee->ava;?>" alt="img" width="150" height="150" style="margin: 25px auto 25px auto">
+        <label for="">Изменить аватарку<input name="ava" type="file"></label>
+        <input name="csrf_token" type="hidden" value="<?= app()->auth::generateCSRF() ?>"/>
         <label for="">Имя<br><input type="text" name="name" value="<?=$employee->name;?>"></label><br>
         <label for="">Фамилия<br><input type="text" name="surname" value="<?=$employee->surname;?>"></label><br>
         <label for="">Отчество<br><input type="text" name="midlename" value="<?=$employee->midlename;?>"></label><br>
@@ -9,7 +22,7 @@
                 <option <?php if($employee->sex == 'м'): echo 'selected'; endif;?> value="м">Мужчина</option>
                 <option <?php if($employee->sex == 'ж'): echo 'selected'; endif;?> value="ж">Женщина</option>
             </select></label><br>
-        <label for="">Дата рождения<br><input type="text" name="birthday" value="<?=$employee->birthday;?>"></label><br>
+        <label for="">Дата рождения<br><input type="date" name="birthday" value="<?=$employee->birthday;?>"></label><br>
         <label for="">Адрес<br><input type="text" name="adress" value="<?=$employee->adress;?>"></label><br>
         <label for="">Отдел</br><select name="department" id="">
                 <?php foreach ($departments as $depatment){?>

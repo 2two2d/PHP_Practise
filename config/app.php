@@ -17,8 +17,16 @@ return [
         'nospaces' => \Validators\SpaceValidator::class,
         'startswithcapital' => \Validators\CapitalValidator::class,
         'onlychars' => \Validators\OnlycharsValidator::class,
-        'email' => \Validators\EmailValidator::class
-    ]
+        'email' => \Validators\EmailValidator::class,
+        'imgsize' => \Validators\ImgsizeValidator::class,
+        'isimg' => \Validators\IsimgValidator::class,
+    ],
+    'routeAppMiddleware' => [
+        'csrf' => \Middlewares\CSRFMiddleware::class,
+        'trim' => \Middlewares\TrimMiddleware::class,
+        'specialChars' => \Middlewares\SpecialCharsMiddleware::class,
+    ],
+
 ];
 
 

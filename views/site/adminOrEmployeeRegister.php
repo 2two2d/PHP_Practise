@@ -4,8 +4,9 @@
         echo '<p style="color: red">'.$error.'</p>';
     }
 }?>
-<form action="" method="POST">
+<form action="" method="POST" enctype="multipart/form-data">
     <input type="text" name="role_id" value="<?= $role_id ?>" hidden>
+    <input name="csrf_token" type="hidden" value="<?= app()->auth::generateCSRF() ?>"/>
     <div id="pointOne">
         <label for="">Имя пользователя</br><input name="username" type="text"></label></br>
         <label for="">Почта</br><input name="email" type="text"></label></br>
@@ -21,6 +22,7 @@
         <label for="">Фамилия</br><input name="surname" type="text"></label></br>
         <label for="">Имя</br><input name="name" type="text"></label></br>
         <label for="">Отчество</br><input name="midlename" type="text"></label></br>
+        <label for="">Загрузить аватарку</br><input name="ava" type="file"></label></br>
         <label for="">Пол</br><select name="sex" id="">
                 <option value="м">Мужчина</option>
                 <option value="ж">Женщина</option>

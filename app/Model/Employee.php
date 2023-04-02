@@ -20,6 +20,7 @@ class Employee extends Model
         'adress',
         'department',
         'staff',
-        'post'
+        'post',
+        'ava'
     ];
 }

@@ -29,12 +29,21 @@ class Site
     public function employees(Request $request): string
     {
         $employees = Employee::where('role_id', '<', app()->auth->user()->role_id)->join('user', 'user.username','=','employee.username')->get();
-
+        if(array_key_exists('department',$request->all())){
+            $employees = Employee::where('role_id', '<', app()->auth->user()->role_id)->where('department', $request->department)->join('user', 'user.username','=','employee.username')->get();
+        }else if(array_key_exists('staff',$request->all())){
+            $employees = Employee::where('role_id', '<', app()->auth->user()->role_id)->where('staff', $request->staff)->join('user', 'user.username','=','employee.username')->get();
+        }
+        $departments = Department::all();
+        $staffs = Staff::all();
         $currentDate = date('Ymd', time());
         $evgBirthday = Employee::where('role_id', '<', app()->auth->user()->role_id)->join('user', 'user.username','=','employee.username')->avg('birthday');
         $evgAge = round(($currentDate - $evgBirthday)/10000, 2);
         return new View('site.employees',['employees' => $employees,
-                                               'evgAge' => $evgAge]);
+                                               'evgAge' => $evgAge,
+                                               'evgBirthday' => $evgBirthday,
+                                               'departments' => $departments,
+                                               'staffs' => $staffs]);
     }
 
     public function adminRegister(Request $request): string
@@ -69,6 +78,7 @@ class Site
                 'midlename' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
                 'birthday' => ['required',],
                 'adress' => ['required'],
+                'ava' => ['imgsize', 'isimg']
             ], [
                 'required' => 'Пустое поле :field!',
                 'unique' => 'Поле :field должно быть уникально!',
@@ -77,6 +87,8 @@ class Site
                 'startswithcapital' => 'Поле :field должно начинаться с заглавной буквы!',
                 'onlychars' => 'Поле :field должно содержать только символы кириллицы!',
                 'email' => 'Почта должна содержать символ "@"',
+                'imgsize' => 'Размер картинки не может превышать 2мб!',
+                'isimg' => 'Поддерживаются только картинки "jpeg" и "png"!'
             ]);
 
             if($validator->fails()){
@@ -87,6 +99,12 @@ class Site
             $user = User::create($request->all());
             $user->save();
             $employee = Employee::create($request->all());
+
+            $imgUniqueName = md5(time()).'.'.explode('/',$_FILES['ava']['type'])[1];
+            $employee->ava = $imgUniqueName;
+            move_uploaded_file($_FILES['ava']['tmp_name'], __DIR__ . '\..\..\public\\Images\\' . $imgUniqueName);
+
+
             $employee->save();
             app()->route->redirect('/employees');
         }
@@ -105,33 +123,49 @@ class Site
         $posts = Post::all();
 
         if($request->method==='POST'){
+            $employee = Employee::where('username', $request->username)->first();
 
             $validator = new Validator($request->all(), [
-                'username' => ['required', 'unique:user,username', 'nospaces'],
-                'email' => ['required', 'unique:user,email', 'nospaces', 'email'],
-                'password' => ['required', 'password', 'nospaces'],
                 'name' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
                 'surname' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
                 'midlename' => ['required', 'nospaces', 'startswithcapital', 'onlychars'],
                 'birthday' => ['required',],
                 'adress' => ['required'],
+                'imgsize' => ['Размер картинки не может превышать 2мб!'],
+                'isimg' => ['Поддерживаются только картинки "jpeg" и "png"!']
             ], [
                 'required' => 'Пустое поле :field!',
                 'unique' => 'Поле :field должно быть уникально!',
-                'password' => 'Поле :field должно содержать больше 8 символов!',
                 'nospaces' => 'Поле :field не может содержать пробелы!',
                 'startswithcapital' => 'Поле :field должно начинаться с заглавной буквы!',
                 'onlychars' => 'Поле :field должно содержать только символы кириллицы!',
-                'email' => 'Почта должна содержать символ "@"',
+                'imgsize' => 'Размер картинки не может превышать 2мб!',
+                'isimg' => 'Поддерживаются только картинки "jpeg" и "png"!'
             ]);
 
             if($validator->fails()){
-                return new View('site.employees',
-                    ['message' => $validator->errors()]);
+                return new View('site.employeeChange',
+                    ['employee' => $employee,
+                     'departments' => $departments,
+                     'staffs' => $staffs,
+                     'posts' => $posts,
+                     'message' => $validator->errors()]);
             }
 
-            Employee::where('username', $request->username)->update($request->all());
-            app()->route->redirect('/employees');
+            $employee->update($request->all());
+
+            if($_FILES['ava']){
+                $imgUniqueName = md5(time()).'.'.explode('/',$_FILES['ava']['type'])[1];
+                $employee->ava = $imgUniqueName;
+                move_uploaded_file($_FILES['ava']['tmp_name'], __DIR__ . '\..\..\public\\Images\\' . $imgUniqueName);
+                $employee->save();
+            }
+
+            return new View('site.employeeChange', ['employee' => $employee,
+                'departments' => $departments,
+                'staffs' => $staffs,
+                'posts' => $posts,
+                'message' => 'Пользователь был успешно обновлён']);
         }
 
         return new View('site.employeeChange', ['employee' => $employee,

@@ -5,7 +5,7 @@
 <style>
     #message{
         margin: 100px auto 0 auto;
-        width: 600px;
+        width: 800px;
         height: 20px;
     }
     .changeBtn{

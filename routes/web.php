@@ -1,6 +1,7 @@
 <?php
 
 use Src\Route;
+use FastRoute\RouteCollector;
 
 Route::add('GET','/about', [Controller\Site::class, 'index']);
 Route::add('GET','/personal_data', [Controller\Site::class, 'personalData'])->middleware('auth');
