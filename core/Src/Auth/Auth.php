@@ -13,15 +13,18 @@ class Auth
     public static function init(IdentityInterface $user): void
     {
         self::$user = $user;
+
         if (self::user()) {
             self::login(self::user());
         }
+
     }
 
     //Вход пользователя по модели
     public static function login(IdentityInterface $user): void
     {
         self::$user = $user;
+
         Session::set('id', self::$user->getId());
     }
 

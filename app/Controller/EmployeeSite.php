@@ -6,7 +6,7 @@ use Model\Employee;
 use Src\Request;
 use Src\View;
 
-class EmployeeController
+class EmployeeSite
 {
     public function index(Request $request): string
     {

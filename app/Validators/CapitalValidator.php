@@ -10,6 +10,6 @@ class CapitalValidator extends AbstractValidator
 
     public function rule(): bool
     {
-        return mb_strtolower((String)$this->value[0]) != (String)$this->value[0];
+        return mb_strtolower(mb_substr($this->value, 0, 1)) != mb_substr($this->value, 0, 1);
     }
 }

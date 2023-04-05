@@ -13,7 +13,7 @@ use Model\Staff;
 use Src\Request;
 use Validators\ValidatorRules;
 
-class AdminController
+class Admin
 {
     public function employees(Request $request): string
     {
@@ -65,12 +65,13 @@ class AdminController
             if($validator->fails()){
                 return new View('site.adminOrEmployeeRegister',
                     ['message' => $validator->errors()]);
+
             }
 
             $user = User::create($request->all());
             $user->save();
             $employee = Employee::create($request->all());
-            $employee->setAva($_FILES['ava']);
+            $employee->setAva($_FILES['ava'], __DIR__ . '/../../public/Images/');
             $employee->save();
             app()->route->redirect('/employees');
         }
@@ -106,7 +107,7 @@ class AdminController
             $employee->update(array_slice($request->all(), 0, 11));
 
             if($_FILES['ava']['tmp_name']){
-                $employee->setAva($_FILES['ava']);
+                $employee->setAva($_FILES['ava'], __DIR__ . '/../../public/Images/');
                 $employee->save();
             }
 

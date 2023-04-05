@@ -5,7 +5,7 @@ use Src\Auth\Auth;
 use Src\View;
 use Src\Request;
 
-class AuthController
+class AuthSite
 {
     public function login(Request $request): string
     {

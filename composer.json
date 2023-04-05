@@ -12,7 +12,11 @@
     "require": {
         "php": "^7.4 | ^8.1",
         "illuminate/database": "10.x-dev",
-        "illuminate/events": "10.x-dev"
+        "illuminate/events": "10.x-dev",
+        "2two2d/collect": "dev-main",
+        "nikic/fast-route": "^2.0@dev",
+        "2two2d/setava": "dev-main",
+        "phpunit/phpunit": "10.0.x-dev"
     },
     "autoload": {
         "psr-4": {
@@ -20,5 +24,4 @@
             "": "app/"
         }
     }
-
 }
